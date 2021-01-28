@@ -2,8 +2,9 @@ import numpy as np
 import cv2
 from collections import deque
 from datetime import datetime
+import time
 import os
-directory= r'savedFile'
+directory= r'\savedFile'
 state=1
 
 # Define the upper and lower boundaries for a color to be considered "Blue"
@@ -122,13 +123,19 @@ while True:
             elif 410 <= center[0] <= 470:
                     colorIndex = 3 # Yellow
             elif (490 <= center[0] <= 550) and state:
-
                     now = datetime.now()
-                    current_time = now.strftime("%H:%M:%S")
-                    filename='imgat '+str(current_time)+'.jpg'
-                    os.chdir(directory)
+                    current_time = now.strftime("%S")
+                    seconds=time.time()
+                    addName= (int(seconds)+int(current_time))%(int(seconds)%109771+11) + int(current_time)
+                    filename='imgat'+str(addName)+'.png'
+                    print(filename)
+                    currentDir=os.getcwd()
+                    newDir=currentDir+directory
+                    print(newDir)
+                    os.chdir(newDir)
                     cv2.imwrite(filename, VirtualWhiteBoard)
                     state=0
+                    os.chdir(currentDir)
 
         else :
             state=1
