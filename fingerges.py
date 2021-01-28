@@ -1,7 +1,10 @@
 import numpy as np
 import cv2
 from collections import deque
-
+from datetime import datetime
+import os
+directory= r'savedFile'
+state=1
 
 # Define the upper and lower boundaries for a color to be considered "Blue"
 blueLower = np.array([100, 60, 60])
@@ -32,11 +35,13 @@ VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (200,450),30, colors[0], -1)
 VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (280,450), 30, colors[1], -1)
 VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (360,450),30, colors[2], -1)
 VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (440,450), 30,colors[3], -1)
+VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (520,450), 30, (0,0,0), 2)
 cv2.putText(VirtualWhiteBoard, "CLEAR", (100, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
 cv2.putText(VirtualWhiteBoard, "RED", (183, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 cv2.putText(VirtualWhiteBoard, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 cv2.putText(VirtualWhiteBoard, "GREEN", (340, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 cv2.putText(VirtualWhiteBoard, "BLUE", (420, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150,150,150), 2, cv2.LINE_AA)
+cv2.putText(VirtualWhiteBoard, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
 cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
 
 # Load the video
@@ -58,13 +63,14 @@ while True:
     Tracking = cv2.circle(Tracking, (280,450), 30, colors[1], -1)
     Tracking = cv2.circle(Tracking, (360, 450),30, colors[2], -1)
     Tracking = cv2.circle(Tracking, (440,450), 30, colors[3], -1)
+    Tracking = cv2.circle(Tracking, (520,450), 30, (122,122,122), -1)
 
     cv2.putText(Tracking, "CLEAR", (100,455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "RED", (183, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "GREEN", (340, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "BLUE", (420, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150,150,150), 1, cv2.LINE_AA)
-
+    cv2.putText(Tracking, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
 
 
     # Determine which pixels fall within the blue boundaries and then blur the binary image
@@ -115,8 +121,17 @@ while True:
                     colorIndex = 2 # Red
             elif 410 <= center[0] <= 470:
                     colorIndex = 3 # Yellow
+            elif (490 <= center[0] <= 550) and state:
+
+                    now = datetime.now()
+                    current_time = now.strftime("%H:%M:%S")
+                    filename='imgat '+str(current_time)+'.jpg'
+                    os.chdir(directory)
+                    cv2.imwrite(filename, VirtualWhiteBoard)
+                    state=0
 
         else :
+            state=1
             if colorIndex == 0:
                 redpoints[redindex].appendleft(center)
             elif colorIndex == 1:
