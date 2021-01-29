@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 directory= r'savedFile'
 state=1
+flag=1
 theme=0
 
 # Define the upper and lower boundaries for a color to be considered "Blue"
@@ -34,19 +35,21 @@ def whiteBoard (color = 255,):
     global virtualWhiteBoard
     virtualWhiteBoard = np.zeros((485,636,3)) + color
     virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (40,450), 30, (0,255,255), -1)
-    virtualWhiteBoard= cv2.circle(virtualWhiteBoard, (120,450), 30, (0,0,0), 2)
+    virtualWhiteBoard= cv2.circle(virtualWhiteBoard, (120,450), 30, (255,0,255), -1)
     virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (200,450),30, colors[0], -1)
     virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (280,450), 30, colors[1], -1)
     virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (360,450),30, colors[2], -1)
     virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (440,450), 30,colors[3], -1)
-    virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (520,450), 30, (0,0,0), 2)
+    virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (520,450), 30, (255,0,255), -1)
+    virtualWhiteBoard = cv2.rectangle(virtualWhiteBoard, (590,10), (620,40), colors[0], -1)
     cv2.putText(virtualWhiteBoard, "THEME", (20, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
-    cv2.putText(virtualWhiteBoard, "CLEAR", (100, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "CLEAR", (100, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(virtualWhiteBoard, "RED", (183, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(virtualWhiteBoard, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
     cv2.putText(virtualWhiteBoard, "GREEN", (340, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(virtualWhiteBoard, "BLUE", (420, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150,150,150), 2, cv2.LINE_AA)
-    cv2.putText(virtualWhiteBoard, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "X", (595, 35), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
 whiteBoard()
 cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
@@ -60,13 +63,15 @@ def track():
     Tracking = cv2.circle(Tracking, (360, 450),30, colors[2], -1)
     Tracking = cv2.circle(Tracking, (440,450), 30, colors[3], -1)
     Tracking = cv2.circle(Tracking, (520,450), 30, (122,122,122), -1)
+    Tracking = cv2.rectangle(Tracking, (590,10), (620,40), colors[0], -1)
     cv2.putText(Tracking, "THEME", (20, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "CLEAR", (100,455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "RED", (183, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(Tracking, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(Tracking, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "GREEN", (340, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "BLUE", (420, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150,150,150), 1, cv2.LINE_AA)
     cv2.putText(Tracking, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(Tracking, "X", (595, 35), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
 
 
@@ -110,13 +115,14 @@ while True:
         center = (int(M['m10'] / M['m00']), int(M['m01'] / M['m00']))
 
         if center[1]>410:
-            if 10 <= center[0] <= 70:
+            if 10 <= center[0] <= 70 and state:
                 if theme == 0:
                     whiteBoard(000)
                     theme=1
                 else:
                     whiteBoard(255)
                     theme=0
+                state=0
             elif 90 <= center[0] <= 150: # Clear All
                 redpoints = [deque(maxlen=512)]
                 yellowpoints = [deque(maxlen=512)]
@@ -142,17 +148,21 @@ while True:
                     colorIndex = 2 # Red
             elif 410 <= center[0] <= 470:
                     colorIndex = 3 # Yellow
-            elif (490 <= center[0] <= 550) and state:
+            elif (490 <= center[0] <= 550) and flag:
 
                     now = datetime.now()
                     current_time = now.strftime("%H:%M:%S")
                     filename='imgat '+str(current_time)+'.jpg'
                     os.chdir(directory)
                     cv2.imwrite(filename, virtualWhiteBoard)
-                    state=0
+                    flag=0
+                    
+        elif(center[1]>=10 and center[1]<=40 and center[0]<=620 and center[0]>=590):
+            break
 
         else :
             state=1
+            flag=1
             if colorIndex == 0:
                 redpoints[redindex].appendleft(center)
             elif colorIndex == 1:
