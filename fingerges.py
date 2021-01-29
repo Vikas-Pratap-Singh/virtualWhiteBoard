@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 directory= r'savedFile'
 state=1
+theme=0
 
 # Define the upper and lower boundaries for a color to be considered "Blue"
 blueLower = np.array([100, 60, 60])
@@ -27,22 +28,47 @@ blueindex = 0
 
 colors = [(0, 0, 255), (0, 255, 255), (0, 255, 0),(255, 0, 0)]
 colorIndex = 0
-
+virtualWhiteBoard = np.zeros((485,636,3)) + 255
 # Setup the Paint interface
-VirtualWhiteBoard = np.zeros((485,636,3)) + 255
-VirtualWhiteBoard= cv2.circle(VirtualWhiteBoard, (120,450), 30, (0,0,0), 2)
-VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (200,450),30, colors[0], -1)
-VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (280,450), 30, colors[1], -1)
-VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (360,450),30, colors[2], -1)
-VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (440,450), 30,colors[3], -1)
-VirtualWhiteBoard = cv2.circle(VirtualWhiteBoard, (520,450), 30, (0,0,0), 2)
-cv2.putText(VirtualWhiteBoard, "CLEAR", (100, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
-cv2.putText(VirtualWhiteBoard, "RED", (183, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-cv2.putText(VirtualWhiteBoard, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-cv2.putText(VirtualWhiteBoard, "GREEN", (340, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-cv2.putText(VirtualWhiteBoard, "BLUE", (420, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150,150,150), 2, cv2.LINE_AA)
-cv2.putText(VirtualWhiteBoard, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
+def whiteBoard (color = 255,):
+    global virtualWhiteBoard
+    virtualWhiteBoard = np.zeros((485,636,3)) + color
+    virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (40,450), 30, (0,255,255), -1)
+    virtualWhiteBoard= cv2.circle(virtualWhiteBoard, (120,450), 30, (0,0,0), 2)
+    virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (200,450),30, colors[0], -1)
+    virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (280,450), 30, colors[1], -1)
+    virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (360,450),30, colors[2], -1)
+    virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (440,450), 30,colors[3], -1)
+    virtualWhiteBoard = cv2.circle(virtualWhiteBoard, (520,450), 30, (0,0,0), 2)
+    cv2.putText(virtualWhiteBoard, "THEME", (20, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "CLEAR", (100, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "RED", (183, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "GREEN", (340, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "BLUE", (420, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150,150,150), 2, cv2.LINE_AA)
+    cv2.putText(virtualWhiteBoard, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1, cv2.LINE_AA)
+
+whiteBoard()
 cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
+
+def track():
+    global Tracking
+    Tracking = cv2.circle(Tracking, (40,450), 30, (60,70,180), -1)
+    Tracking = cv2.circle(Tracking, (120,450), 30, (122,122,122), -1)
+    Tracking = cv2.circle(Tracking, (200,450),30, colors[0], -1)
+    Tracking = cv2.circle(Tracking, (280,450), 30, colors[1], -1)
+    Tracking = cv2.circle(Tracking, (360, 450),30, colors[2], -1)
+    Tracking = cv2.circle(Tracking, (440,450), 30, colors[3], -1)
+    Tracking = cv2.circle(Tracking, (520,450), 30, (122,122,122), -1)
+    cv2.putText(Tracking, "THEME", (20, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(Tracking, "CLEAR", (100,455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(Tracking, "RED", (183, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(Tracking, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(Tracking, "GREEN", (340, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(Tracking, "BLUE", (420, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150,150,150), 1, cv2.LINE_AA)
+    cv2.putText(Tracking, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
+
+
 
 # Load the video
 camera = cv2.VideoCapture(0)
@@ -58,21 +84,7 @@ while True:
     hsv = cv2.cvtColor(Tracking, cv2.COLOR_BGR2HSV)
 
     # Add the coloring options to the Tracking
-    Tracking = cv2.circle(Tracking, (120,450), 30, (122,122,122), -1)
-    Tracking = cv2.circle(Tracking, (200,450),30, colors[0], -1)
-    Tracking = cv2.circle(Tracking, (280,450), 30, colors[1], -1)
-    Tracking = cv2.circle(Tracking, (360, 450),30, colors[2], -1)
-    Tracking = cv2.circle(Tracking, (440,450), 30, colors[3], -1)
-    Tracking = cv2.circle(Tracking, (520,450), 30, (122,122,122), -1)
-
-    cv2.putText(Tracking, "CLEAR", (100,455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(Tracking, "RED", (183, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(Tracking, "YELLOW", (260, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(Tracking, "GREEN", (340, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(Tracking, "BLUE", (420, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (150,150,150), 1, cv2.LINE_AA)
-    cv2.putText(Tracking, "SAVE", (500, 455), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1, cv2.LINE_AA)
-
-
+    track()
     # Determine which pixels fall within the blue boundaries and then blur the binary image
     blueMask = cv2.inRange(hsv, blueLower, blueUpper)
     blueMask = cv2.erode(blueMask, kernel, iterations=2)
@@ -98,7 +110,14 @@ while True:
         center = (int(M['m10'] / M['m00']), int(M['m01'] / M['m00']))
 
         if center[1]>410:
-            if 90 <= center[0] <= 150: # Clear All
+            if 10 <= center[0] <= 70:
+                if theme == 0:
+                    whiteBoard(000)
+                    theme=1
+                else:
+                    whiteBoard(255)
+                    theme=0
+            elif 90 <= center[0] <= 150: # Clear All
                 redpoints = [deque(maxlen=512)]
                 yellowpoints = [deque(maxlen=512)]
                 greenpoints = [deque(maxlen=512)]
@@ -110,8 +129,10 @@ while True:
                 greenindex = 0
                 blueindex = 0
 
-
-                VirtualWhiteBoard[:412,:,:] = 255
+                if theme == 0:
+                    whiteBoard(255)
+                else:
+                    whiteBoard(0)
 
             elif 170 <= center[0] <= 230:
                     colorIndex = 0 # Blue
@@ -127,7 +148,7 @@ while True:
                     current_time = now.strftime("%H:%M:%S")
                     filename='imgat '+str(current_time)+'.jpg'
                     os.chdir(directory)
-                    cv2.imwrite(filename, VirtualWhiteBoard)
+                    cv2.imwrite(filename, virtualWhiteBoard)
                     state=0
 
         else :
@@ -160,11 +181,11 @@ while True:
                 if points[i][j][k - 1] is None or points[i][j][k] is None:
                     continue
                 cv2.line(Tracking, points[i][j][k - 1], points[i][j][k], colors[i], 2)
-                cv2.line(VirtualWhiteBoard, points[i][j][k - 1], points[i][j][k], colors[i], 2)
+                cv2.line(virtualWhiteBoard, points[i][j][k - 1], points[i][j][k], colors[i], 2)
 
     # Show the Tracking and the VirtualWhiteBoard image
     cv2.imshow("Tracking", Tracking)
-    cv2.imshow("Virtual White Board", VirtualWhiteBoard)
+    cv2.imshow("Virtual White Board", virtualWhiteBoard)
 
 	# If the 'q' key is pressed, stop the loop
     if cv2.waitKey(1) & 0xFF == ord("q"):
